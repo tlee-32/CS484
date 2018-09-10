@@ -1,7 +1,7 @@
 # Reads and tokenizes labelled training files with reviews.
 from textcleaner import *
 import os
-import gensim
+from gensim.models.doc2vec import TaggedDocument
 import smart_open
 import pickle
 
@@ -29,13 +29,13 @@ def tokenizeReviews(fileName, isTrainingFile=False):
     cnt = 0
     # read training file in utf-8 encoding
     for i, review in enumerate(smart_open.smart_open(fileName, encoding="utf-8")):
-        if cnt == 5010: break
+        if cnt == 18000: break
         sentiment, review = splitSentimentAndReview(review)
         tokenizedReview = tokenizeDocument(review)
         # tag training documents
         if(isTrainingFile):
             id = '{}_{}'.format(sentiment, i)
-            tokens.append(gensim.models.doc2vec.TaggedDocument(tokenizedReview, [id]))
+            tokens.append(TaggedDocument(tokenizedReview, [id]))
         else:
             tokens.append(tokenizedReview)
         cnt += 1
