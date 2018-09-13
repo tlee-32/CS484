@@ -1,5 +1,6 @@
 *.data
 *.pdf
 *.pkl
+*.model
 .DS_Store
 __pycache__/

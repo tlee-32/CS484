@@ -11,8 +11,7 @@ import pickle
     return - tuple(str, str)
 """
 def splitSentimentAndReview(review):
-    tag = review[0:2] # get sentiment +1 or -1 from first two characters
-    sentiment =  'pos' if tag == '+1' else 'neg'
+    sentiment = review[0:2] # get sentiment +1 or -1 from first two characters
     review = review[2:] # get the rest of the review
     return sentiment, review
 
@@ -22,14 +21,12 @@ def splitSentimentAndReview(review):
     Implementation based on gensim tutorial
         - https://github.com/RaRe-Technologies/gensim/blob/develop/docs/notebooks/doc2vec-lee.ipynb
 
-    return - tokenized reviews
+    return - sentiment and tokenized reviews
 """
 def tokenizeReviews(fileName, isTrainingFile=False):
     tokens = []
-    cnt = 0
     # read training file in utf-8 encoding
     for i, review in enumerate(smart_open.smart_open(fileName, encoding="utf-8")):
-        if cnt == 18000: break
         sentiment, review = splitSentimentAndReview(review)
         tokenizedReview = tokenizeDocument(review)
         # tag training documents
@@ -37,8 +34,8 @@ def tokenizeReviews(fileName, isTrainingFile=False):
             id = '{}_{}'.format(sentiment, i)
             tokens.append(TaggedDocument(tokenizedReview, [id]))
         else:
+            # test without tags
             tokens.append(tokenizedReview)
-        cnt += 1
     return tokens
 
 """
@@ -49,10 +46,10 @@ def tokenizeReviews(fileName, isTrainingFile=False):
 
     return - tokenized reviews as a generator
 """
-def readReviews(fileName, pickleFileExists=False, isTrainingFile=False):
+def readReviews(fileName, loadFile=False, isTrainingFile=False):
     pickleFileName = renameFileExtension(fileName, 'data', 'pkl')
 
-    if(pickleFileExists):
+    if(loadFile):
         # deserialize object if .pkl file already exists
         with smart_open.smart_open(pickleFileName, "rb") as f:
             yield pickle.load(f, encoding="utf-8")
@@ -69,6 +66,10 @@ def readReviews(fileName, pickleFileExists=False, isTrainingFile=False):
 def serializeObject(fileName, obj):
     with smart_open.smart_open(fileName, "wb") as f:
         pickle.dump(obj, f)
+
+def deserializeObject(fileName):
+    with smart_open.smart_open(fileName, "rb") as f:
+        return pickle.load(f)
 
 def fileExists(fileName):
     return os.path.exists(fileName)

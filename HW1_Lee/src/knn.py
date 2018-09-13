@@ -1,5 +1,8 @@
 import numpy as np
+from vectorizermodel import *
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 class KNNClassifier:
 
@@ -12,37 +15,26 @@ class KNNClassifier:
         return - classified result
     """
     def classify(self, document):
-        documentVector = self.model.infer_vector(document) # vectorizes unseen test document
-        trainingVectors = self.model.docvecs.vectors_docs # all document vectors of training data
-        nearestNeighbors = findKNearestNeighbors(self.k, trainingVectors, documentVector)
-
-        # TODO: MAJORITY VOTE
-
-        #print(model.docvecs.index_to_doctag(0)) #find doctag
-        #print(model.docvecs.doctags)
-        #print(model.docvecs.doctag_syn0[0]) #find vector
-        knn = findKNearestNeighbors(k, trainingVectors, documentVector)
-        print(trainingVectors[knn[0][0]])
-        #print(trainDocs[knn[0][0]])
-        print(trainingVectors[knn[1][0]])
-        #print(trainDocs[knn[1][0]])
-        print(trainingVectors[knn[2][0]])
-        #print(trainDocs[knn[2][0]])
-
-        #return result
+        documentVector = self.model.vectorizeDocument(document) # vectorizes unseen test document
+        trainingVectors = self.model.getTrainingVectors() # all document vectors of training data
+        nearestNeighbors = self.findKNearestNeighbors(trainingVectors, documentVector)
+        nearestNeighbors = self.removeSuffixFromTags(nearestNeighbors)# values should only be labelled with '+1' or '-1' prefix
+        majorityVote = self.getWeightedMajorityVote(nearestNeighbors)
+        return majorityVote
 
     """
-        Fits the data to the knn model using Doc2Vec.
+        Fits the data to the knn model using the Doc2Vec.
     """
-    def fit(self, documents):
-        self.model = trainDoc2VecModel(documents, vectorSize=50, window=2, minCount=2, epochs=5)
+    def fit(self, documents, retrain=True):
+        self.model = Doc2VecModel(trainDocs=documents, vectorSize=100, window=3, minCount=1, epochs=3, retrain=retrain)
 
     """
         Finds the k-nearest neighbors in a 2D array holding vectors given a 1D vector.
     """
     def findKNearestNeighbors(self, trainingVectors, vector):
-        distances = euclideanDistance(trainingVectors, vector, isMatrixNorm=True)
-        nearestNeighbors = findKSmallestValues(self.k, distances)
+        distances = self.euclideanDistance(trainingVectors, vector, isMatrixNorm=True)
+        #distances = self.cosineSimilarity(trainingVectors, vector, isMatrixNorm=True)
+        nearestNeighbors = self.findKSmallestValues(distances)
         return nearestNeighbors
 
     """
@@ -54,13 +46,40 @@ class KNNClassifier:
         return idxValueTuples
 
     """
+        Calculates the weighted majority vote using the inverse of the distance.
+    """
+    def getWeightedMajorityVote(self, nearestNeighbors):
+        weightedClasses = {name: 0 for (name, dist) in nearestNeighbors} # create mapping of class names and their weights
+        # calculate weights for classes
+        for (idx, dist) in nearestNeighbors:
+            weightedVote = 1 / dist # inverse of distance allows closer points to have more weight
+            weightedClasses[idx] += weightedVote # sum of weightedVotes for a class
+        # determine winner
+        winner = max(weightedClasses, key=weightedClasses.get)
+        return winner
+
+    """
+        Substring the tag from TaggedDocument such that it only holds the class label.
+    """
+    def removeSuffixFromTags(self, classValueList):
+        result = []
+        for tag, dist in classValueList:
+            name = self.model.findDocTag(tag)
+            result.append((name[:2], dist))
+        return result
+
+    """
         Computes euclidean distance between 1D/2D vectors by vector/matrix norm calculation.
         Vector/matrix norm is simply the sqrt(sum of the squared elements)
         in a vector.
 
         isMatrixNorm - determines if u or v is 2D
     """
-    def euclideanDistance(u, v, isMatrixNorm=False):
+    def euclideanDistance(self, u, v, isMatrixNorm=False):
         axis = 1 if isMatrixNorm else 0 # decides if 1D or 2D axes computation is needed
         vectorDiffs = v - u
         return np.linalg.norm(vectorDiffs, axis=axis)
+
+    def cosineSimilarity(self, u, v, isMatrixNorm=False):
+        axis = 1 if isMatrixNorm else 0 # decides if 1D or 2D axes computation is needed
+        return cosine_similarity(u, v.reshape(1, -1)).flatten()
