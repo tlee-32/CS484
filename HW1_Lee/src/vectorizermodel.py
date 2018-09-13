@@ -15,7 +15,7 @@ class Doc2VecModel:
         if retrain:
             self.create()
             self.train()
-            #self.save('../doc2vec.model')
+            self.save('../doc2vec.model')
         else:
             self.load('../doc2vec.model')
 
@@ -29,7 +29,8 @@ class Doc2VecModel:
                 window=self.window,
                 min_count=self.minCount,
                 workers=4,
-                epochs=self.epochs)
+                epochs=self.epochs,
+                dm=0, dbow_words=1, hs=0, negative=5, sample=1e-4)
 
     def train(self):
         self.model.train(

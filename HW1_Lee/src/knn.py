@@ -26,7 +26,7 @@ class KNNClassifier:
         Fits the data to the knn model using the Doc2Vec.
     """
     def fit(self, documents, retrain=True):
-        self.model = Doc2VecModel(trainDocs=documents, vectorSize=100, window=3, minCount=1, epochs=3, retrain=retrain)
+        self.model = Doc2VecModel(trainDocs=documents, vectorSize=100, window=3, minCount=1, epochs=20, retrain=retrain)
 
     """
         Finds the k-nearest neighbors in a 2D array holding vectors given a 1D vector.

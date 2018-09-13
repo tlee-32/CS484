@@ -7,7 +7,6 @@ from knn import *
 def findOptimalKForKNN(trainingData):
     folds = createKFolds(np.array(trainingData), kFolds=7)
     knnResults = kFoldCV(folds, 3)
-    #print(knnResults)
 
 """
     Iterates through each fold, performs knn and outputs the number of correct
