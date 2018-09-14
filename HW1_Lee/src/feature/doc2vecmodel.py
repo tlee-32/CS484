@@ -1,10 +1,8 @@
-# Holds functions to vectorize documents using gensim
-
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
-from sklearn.feature_extraction.text import TfidfVectorizer
-from filetokenizer import fileExists, serializeObject, deserializeObject
-import numpy as np
 
+"""
+    Helper class to train gensim's implementation of Doc2Vec (Tomas Mikolov and Quoc Le).
+"""
 class Doc2VecModel:
     def __init__(self, trainDocs, vectorSize, window, minCount, epochs, retrain):
         self.trainDocs = trainDocs
@@ -15,22 +13,18 @@ class Doc2VecModel:
         if retrain:
             self.create()
             self.train()
-            self.save('../doc2vec.model')
+            self.save('../data/doc2vecmodel/doc2vec.model')
         else:
-            self.load('../doc2vec.model')
+            self.load('../data/doc2vecmodel/doc2vec.model')
 
     def load(self, fileName):
         self.model = Doc2Vec.load(fileName)
 
     def create(self):
         self.model = Doc2Vec(
-                self.trainDocs,
-                vector_size=self.vectorSize,
-                window=self.window,
-                min_count=self.minCount,
-                workers=4,
-                epochs=self.epochs,
-                dm=0, dbow_words=1, hs=0, negative=5, sample=1e-4)
+                self.trainDocs, vector_size=self.vectorSize, window=self.window,
+                min_count=self.minCount, epochs=self.epochs, workers=4,
+                dm=0, dbow_words=0, hs=0, negative=5, sample=1e-4)
 
     def train(self):
         self.model.train(

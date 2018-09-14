@@ -1,5 +1,4 @@
 # Reads and tokenizes labelled training files with reviews.
-from textcleaner import *
 import os
 from gensim.models.doc2vec import TaggedDocument
 import smart_open
@@ -18,7 +17,7 @@ def splitSentimentAndReview(review):
 """
     Reads, tokenizes, and filters each review in the test/training file.
 
-    Implementation based on gensim tutorial
+    Implementation inspired by gensim tutorial
         - https://github.com/RaRe-Technologies/gensim/blob/develop/docs/notebooks/doc2vec-lee.ipynb
 
     return - sentiment and tokenized reviews

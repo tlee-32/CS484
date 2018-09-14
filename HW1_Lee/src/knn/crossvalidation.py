@@ -1,30 +1,33 @@
 import numpy as np
 from sklearn.model_selection import KFold
 from gensim.models.doc2vec import TaggedDocument
-from sklearn.neighbors import KNeighborsClassifier
-from knn import *
 
+"""
+    Finds the optimal k for k-nearest neighbors classifier. The optimal value
+    of k is chosen by the highest accuracy between the folds.
+
+    return - optimal k
+"""
 def findOptimalKForKNN(trainingData):
-    folds = createKFolds(np.array(trainingData), kFolds=7)
-    knnResults = kFoldCV(folds, 3)
+    folds = createKFolds(np.array(trainingData), kFolds=6)
+    knnResults = kFoldCV(folds, initialK=3) # start k>=3
+    optimalK = max(knnResults, key=knnResults.get) # retrieve highest accuracy from dict, knnResults
+    return optimalK
 
 """
     Iterates through each fold, performs knn and outputs the number of correct
-    and incorrect results for each fold
+    and incorrect results for each fold.
 
-    return - list of final knn results
+    return - list of kNN accuracy for given k-folds
 """
 def kFoldCV(folds, initialK):
     k = initialK
     results = {}
-    c = 0
-    # classify each fold from k=1 to k=len(folds)
+    # classify each fold from k=initialK to k=len(folds)
     for (trainData, testData) in folds:
-        # Train the model using the training sets
-        knn = KNNClassifier(k)
-        knn.fit(trainData, retrain=True) # retrain each time
+        knn = KNNClassifier(k) # train the model using the training sets
+        knn.fit(trainData, retrain=True) # retrain Doc2Vec model for each fold
         correct, incorrect = 0, 0
-        print(k)
         for document in testData: # testData is smaller than 18506
             predictionValue = knn.classify(document.words)
             actualValue = document.tags[0]
@@ -32,9 +35,9 @@ def kFoldCV(folds, initialK):
                 correct += 1
             else:
                 incorrect += 1
-        key = 'k%d' % k
-        results[key] = (correct, incorrect, len(testData))
-        print(results)
+        totalTestData = len(testData)
+        accuracy = correct / totalTestData
+        results[k] = accuracy # map accuracy to value of k
         k += 1
 
     return results
@@ -47,7 +50,6 @@ def kFoldCV(folds, initialK):
 def createKFolds(trainingData, kFolds=3):
     kf = KFold(n_splits=kFolds, shuffle=True, random_state=1)
     folds = []
-    testData = []
     for train, test in kf.split(trainingData):
         # convert to TaggedDocument in order to fit the data
         trainData = [TaggedDocument(arr[0], arr[1]) for arr in trainingData[train]]

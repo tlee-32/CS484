@@ -2,5 +2,7 @@
 *.pdf
 *.pkl
 *.model
+*.docx
+/Report
 .DS_Store
 __pycache__/

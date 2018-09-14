@@ -5,6 +5,8 @@ from nltk.tokenize import word_tokenize
 
 """
     Removes punctuation characters from a given string
+
+    return - removed punctuations for string
 """
 def removePunctuation(rawString):
     excludePunctuation = str.maketrans('', '', punctuation) # translation table that maps punctuation chars to None
@@ -12,6 +14,8 @@ def removePunctuation(rawString):
 
 """
     Normalizes the token's case, whitespaces, and punctuation.
+
+    return - normalized string
 """
 def normalizeString(rawString):
     norm = rawString.lower().strip() # convert to lowercase and strip whitespaces
@@ -21,6 +25,8 @@ def normalizeString(rawString):
 """
     Removes uninformative English words such as
     "the", "i", "as", "a", etc in a list of tokens
+
+    return - removed stop words for string
 """
 def removeStopWords(tokens):
     stopWords = set(stopwords.words('english'))
@@ -30,6 +36,8 @@ def removeStopWords(tokens):
 
 """
     Filters and tokenizes a document
+
+    return - filtered and tokenized document
 """
 def tokenizeDocument(doc):
     normDoc = normalizeString(doc) # remove case, whitespaces, and punctuation
