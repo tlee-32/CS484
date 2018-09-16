@@ -1,6 +1,7 @@
 import numpy as np
 from feature.doc2vecmodel import *
 from gensim.models.doc2vec import Doc2Vec, TaggedDocument
+from sklearn import utils
 
 """
     Implementation of k-Nearest Neighbors
@@ -26,7 +27,7 @@ class KNNClassifier:
         Fits the data to the knn model using the Doc2Vec.
     """
     def fit(self, documents, retrain=True):
-        self.model = Doc2VecModel(trainDocs=documents, vectorSize=100, window=10, minCount=3, epochs=20, retrain=retrain)
+        self.model = Doc2VecModel(trainDocs=utils.shuffle(documents), vectorSize=100, window=10, minCount=3, epochs=20, retrain=retrain)
 
     """
         Finds the k-nearest neighbors in a 2D array holding vectors given a 1D vector.

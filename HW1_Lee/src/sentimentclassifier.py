@@ -1,14 +1,19 @@
 import smart_open
 from preprocess.filetokenizer import readReviews
-from knn.knn import KNNClassifier
+from knn.crossvalidation import *
+from knn.knn import *
 
 def main():
-    reviews = list(readReviews("../data/train/train.data", loadFile=True, isTrainingFile=True))[0]
-    testReviews = list(readReviews("../data/test/test.data", loadFile=True, isTrainingFile=False))[0]
-    knn = KNNClassifier(k=4)
-    knn.fit(reviews, retrain=False) # build Doc2Vec model with training data
+    reviews = list(readReviews("../data/train/train.data", loadFile=False, isTrainingFile=True))[0]
+    ########Cross-validation########
+    #k = findOptimalKForKNN(reviews)
+    #return
+    ################################
+    testReviews = list(readReviews("../data/test/test.data", loadFile=False, isTrainingFile=False))[0]
+    knn = KNNClassifier(k=10)
+    knn.fit(reviews, retrain=True) # build Doc2Vec model with training data
     sentiment = classifySentimentWithKNN(knn, testReviews)
-    print('Sentiments successfully written to output.data')
+    print('Sentiments successfully written to predictions.data')
 
 """
     Classifies the sentiment for each of the 18560 Amazon reviews

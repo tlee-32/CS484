@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.model_selection import KFold
 from gensim.models.doc2vec import TaggedDocument
+from .knn import KNNClassifier
 
 """
     Finds the optimal k for k-nearest neighbors classifier. The optimal value
@@ -9,8 +10,8 @@ from gensim.models.doc2vec import TaggedDocument
     return - optimal k
 """
 def findOptimalKForKNN(trainingData):
-    folds = createKFolds(np.array(trainingData), kFolds=6)
-    knnResults = kFoldCV(folds, initialK=3) # start k>=3
+    folds = createKFolds(np.array(trainingData), kFolds=3)
+    knnResults = kFoldCV(folds, initialK=5)
     optimalK = max(knnResults, key=knnResults.get) # retrieve highest accuracy from dict, knnResults
     return optimalK
 
@@ -28,6 +29,7 @@ def kFoldCV(folds, initialK):
         knn = KNNClassifier(k) # train the model using the training sets
         knn.fit(trainData, retrain=True) # retrain Doc2Vec model for each fold
         correct, incorrect = 0, 0
+        print(k)
         for document in testData: # testData is smaller than 18506
             predictionValue = knn.classify(document.words)
             actualValue = document.tags[0]
@@ -38,6 +40,7 @@ def kFoldCV(folds, initialK):
         totalTestData = len(testData)
         accuracy = correct / totalTestData
         results[k] = accuracy # map accuracy to value of k
+        print(results)
         k += 1
 
     return results
