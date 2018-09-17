@@ -1,5 +1,6 @@
 import os
 from gensim.models.doc2vec import TaggedDocument
+from .textcleaner import *
 import smart_open
 import pickle
 

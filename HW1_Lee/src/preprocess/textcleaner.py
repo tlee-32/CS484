@@ -1,4 +1,3 @@
-# Util file for cleaning and filtering raw text.
 from nltk.corpus import stopwords
 from string import punctuation
 from nltk.tokenize import word_tokenize

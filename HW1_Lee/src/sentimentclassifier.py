@@ -20,7 +20,7 @@ def main():
     of a baby product and writes it to an output file.
 """
 def classifySentimentWithKNN(knn, testData):
-    with smart_open.smart_open("../data/predictions/predicitions.data", "w") as f:
+    with smart_open.smart_open("./data/predictions/predicitions.data", "w") as f:
         for review in testData:
             sentiment = knn.classify(review) # sentiment as +1 or -1
             if(sentiment == '+1'):
