@@ -4,13 +4,13 @@ from knn.crossvalidation import *
 from knn.knn import *
 
 def main():
-    reviews = list(readReviews("../data/train/train.data", loadFile=False, isTrainingFile=True))[0]
+    reviews = list(readReviews("./data/train/train.data", loadFile=True, isTrainingFile=True))[0]
     ########Cross-validation########
     #k = findOptimalKForKNN(reviews)
     #return
     ################################
-    testReviews = list(readReviews("../data/test/test.data", loadFile=False, isTrainingFile=False))[0]
-    knn = KNNClassifier(k=10)
+    testReviews = list(readReviews("./data/test/test.data", loadFile=True, isTrainingFile=False))[0]
+    knn = KNNClassifier(k=7)
     knn.fit(reviews, retrain=True) # build Doc2Vec model with training data
     sentiment = classifySentimentWithKNN(knn, testReviews)
     print('Sentiments successfully written to predictions.data')

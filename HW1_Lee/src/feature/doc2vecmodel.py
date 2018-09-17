@@ -13,7 +13,7 @@ class Doc2VecModel:
         if retrain:
             self.create()
             self.train()
-            self.save('../data/doc2vecmodel/doc2vec.model')
+            #self.save('../data/doc2vecmodel/doc2vec.model')
         else:
             self.load('../data/doc2vecmodel/doc2vec.model')
 

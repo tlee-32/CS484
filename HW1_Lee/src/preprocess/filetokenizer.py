@@ -1,4 +1,3 @@
-# Reads and tokenizes labelled training files with reviews.
 import os
 from gensim.models.doc2vec import TaggedDocument
 import smart_open

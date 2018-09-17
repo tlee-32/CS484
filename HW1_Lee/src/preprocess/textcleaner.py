@@ -31,7 +31,6 @@ def normalizeString(rawString):
 def removeStopWords(tokens):
     stopWords = set(stopwords.words('english'))
     filtered = [word for word in tokens if not word in stopWords]
-    #count = Counter(filtered)
     return filtered
 
 """
