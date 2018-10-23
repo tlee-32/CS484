@@ -3,6 +3,7 @@
 *.pkl
 *.model
 *.docx
+.vscode
 /Report
 .DS_Store
 __pycache__/

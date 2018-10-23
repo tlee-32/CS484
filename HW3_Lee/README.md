@@ -21,9 +21,4 @@ The sentiment predictions will be written to `predicitions.data` located in `/da
 
 # Saving and Loading Files `.pkl`
 For faster run time, the pre-processed data is pickled (saved) in .pkl files and later loaded for re-use.
-In `main.py`, `loadFile = True` if the file has already been saved and the `.pkl` file just needs to be loaded. If `loadFile = False`, then the `.data` file will be read and saved as a `.pkl` file.
-
-# Cluster validation
-
-# `/data` Directory and Subdirectories
-Do not delete the`/data` directory as it will contain all of the files needed to run the sentiment classifier. Place your training data in the `/data/train` directory. 
+In `main.py`, `loadFile = True` if the file has already been saved and the `.tokens` file just needs to be loaded. If `loadFile = False`, then the `.data` file will be read and saved as a `.tokens` file.

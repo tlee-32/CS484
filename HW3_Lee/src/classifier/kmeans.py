@@ -9,8 +9,7 @@ class KMeansClassifier:
         self.metric = metric
 
     def fit(self, data):
-        isSparse = isspmatrix(data)
-        centroids = self.getInitialCentroids(data=data, isSparse=isSparse)
+        centroids = self.getInitialCentroids(data=data)
         return self.kMeans(data, centroids)
 
     def kMeans(self, data, initialCentroids):
@@ -30,13 +29,13 @@ class KMeansClassifier:
             converged = np.array_equal(oldCentroids, newCentroids)
         return labels
     
-    def getInitialCentroids(self, data, isSparse):
+    def getInitialCentroids(self, data):
         rowIdxLimit = 0
         # obtain row limit depending on sparse or non-sparse matrix
-        if isSparse:
+        if isspmatrix(data):
             rowIdxLimit = data.shape[0]
         else:
-            rowIdxLimit = len(data[0])
+            rowIdxLimit = len(data)
         # choose UNIQUE random indices for centroids
         randIndices = np.random.choice(rowIdxLimit, self.clusters, replace=False)
         centroids = data[randIndices]

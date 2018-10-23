@@ -7,7 +7,7 @@ from sklearn.metrics import pairwise_distances
 
     return - newly assigned labels (or indices)
 """
-def getNewLabels(points, centroids, metric='euclidean'):
+def getNewLabels(points, centroids, metric):
     # compute distances by specified metric
     distances = pairwise_distances(X=points, Y=centroids, metric=metric)
     # grab the indices of the closest centroids for each point
@@ -29,4 +29,5 @@ def getNewCentroids(points, labels, numCentroids):
         newCentroidMeanMatrix = np.mean(currentCentroidPoints, axis=0)
         newCentroidMean = np.ravel(newCentroidMeanMatrix)
         newCentroids.append(newCentroidMean)
+
     return newCentroids

@@ -4,19 +4,31 @@ import pickle
 from nltk.tokenize import word_tokenize
 
 """
-    Reads and tokenizes each row in the test file.
+    Append each feature to a token list.
 
-    return - tokenized rows
+    return - token list of all features
 """
-def tokenizeInput(fileName):
+def tokenizeFeatures(fileName):
+    tokens = []
+    # read training file
+    for row in smart_open.smart_open(fileName, encoding="utf-8"):
+        row = row[:-1] # remove newline character
+        tokens.append(row)
+    return tokens
+    
+"""
+    Read each row as a float
+
+    return - tokenized rows of type float
+"""
+def tokenizeFloats(fileName):
     tokens = []
     # read training file
     for row in smart_open.smart_open(fileName, encoding="utf-8"):
         tokenizedRow = word_tokenize(row)
-        tokenizedRow = [float(item) for item in tokenizedRow] # convert each row to an integer
+        tokenizedRow = [float(num) for num in tokenizedRow]
         tokens.append(tokenizedRow)
     return tokens
-
 """
     Reads and tokenizes the term-frequency.
 
@@ -44,7 +56,7 @@ def tokenizeTermFrequency(fileName):
 
     return - tokenized rows a generator
 """
-def readRows(fileName, loadFile=False):
+def readRows(fileName, loadFile=False, isFeatureFile=False):
     tokenFile = renameFileExtension(fileName, 'data', 'tokens')
     tokens = []
     if(loadFile):
@@ -53,7 +65,10 @@ def readRows(fileName, loadFile=False):
             tokens = pickle.load(f, encoding="utf-8")
     else:
         # serialize and pickle the objects to files with pickled extension
-        tokens = tokenizeTermFrequency(fileName) 
+        if(isFeatureFile):
+            tokens = tokenizeFeatures(fileName)
+        else:
+            tokens = tokenizeTermFrequency(fileName)
         serializeObject(tokenFile, tokens)
         
     return tokens
